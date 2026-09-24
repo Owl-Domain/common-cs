@@ -47,4 +47,9 @@
 		<None Pack="true" PackagePath="" Include="meta/changelog.md" />
 	</ItemGroup>
 
+	<!-- Package references -->
+	<ItemGroup Label="packages">
+		<PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2" />
+	</ItemGroup>
+
 </Project>
