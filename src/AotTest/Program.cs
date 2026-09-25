@@ -1,3 +1,3 @@
-﻿using System;
+using System;
 
 Console.WriteLine("AOT is functional.");
