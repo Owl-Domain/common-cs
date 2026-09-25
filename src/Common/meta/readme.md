@@ -1,4 +1,4 @@
-# SDL3 Bindings (Low-level)
+# Common C# utilities
 
-This package contains various C#/.NET utilities that make things just a bit
+This project contains various C#/.NET utilities that make things just a bit
 simpler.
