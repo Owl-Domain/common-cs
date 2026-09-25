@@ -105,6 +105,7 @@ jobs:
         working-directory: src/
         run: dotnet test --no-build --configuration ${{ matrix.configuration }} --warnaserror /p:noWarn=IDE0055 /p:noWarn=CS1591
 
+
   aot:
     runs-on: ubuntu-latest
     steps:
@@ -133,3 +134,36 @@ jobs:
       - name: Run the test project.
         working-directory: ${{ runner.temp }}/aot_test
         run: ./AotTest
+
+
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository.
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            src/
+            .editorconfig
+
+      - name: Setup the .NET development environment.
+        uses: actions/setup-dotnet@v6
+
+      - name: Restore the project dependencies.
+        working-directory: src/
+        run: dotnet restore
+
+      - name: Build the source directory.
+        working-directory: src/
+        run: dotnet build --no-restore --warnaserror --configuration Release /p:ContinuousIntegrationBuild=true /p:noWarn=IDE0055 /p:noWarn=CS1591
+
+      - name: Package the projects.
+        working-directory: src/
+        run: dotnet pack --no-build --warnaserror --configuration Release /p:ContinuousIntegrationBuild=true /p:noWarn=IDE0055 /p:noWarn=CS1591 --output "${{ runner.temp }}/packages/"
+
+      - name: Upload NuGet packages as an artifact.
+        uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          if-no-files-found: error
+          path: "${{ runner.temp }}/packages/"
