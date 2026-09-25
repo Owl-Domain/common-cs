@@ -73,7 +73,7 @@ public static class SemaphoreSlimExtensions
 		/// The maximum amount of time to allow before giving up on entering the <paramref name="semaphore"/>.
 		/// A value of -1 millisecond represents an infinite timeout.
 		/// </param>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> if it was succesfully entered.</returns>
+		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> if it was successfully entered.</returns>
 		/// <remarks>The property <see cref="SemaphoreScope.HasEntered"/> on the returned scope can be checked to see if the semaphore was entered.</remarks>
 		public SemaphoreScope Lock(TimeSpan timeout)
 		{
@@ -89,7 +89,7 @@ public static class SemaphoreSlimExtensions
 		/// A value of -1 millisecond represents an infinite timeout.
 		/// </param>
 		/// <param name="cancellation">A cancellation token that can be used to cancel the operation.</param>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> if it was succesfully entered.</returns>
+		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> if it was successfully entered.</returns>
 		/// <remarks>The property <see cref="SemaphoreScope.HasEntered"/> on the returned scope can be checked to see if the semaphore was entered.</remarks>
 		/// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
 		public async Task<SemaphoreScope> LockAsync(TimeSpan timeout, CancellationToken cancellation = default)
