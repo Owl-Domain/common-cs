@@ -50,17 +50,17 @@ public static class SemaphoreSlimExtensions
 	extension(SemaphoreSlim semaphore)
 	{
 		#region Methods
-		/// <summary>Blocks the current thread until it can enter the <paramref name="semaphore"/>.</summary>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> once.</returns>
+		/// <summary>Blocks the current thread until it can enter the semaphore.</summary>
+		/// <returns>A scope, which when disposed, will release the semaphore once.</returns>
 		public SemaphoreScope Lock()
 		{
 			semaphore.Wait();
 			return new(semaphore, releaseCount: 1);
 		}
 
-		/// <summary>Asynchronously waits to enter the <paramref name="semaphore"/>.</summary>
+		/// <summary>Asynchronously waits to enter the semaphore.</summary>
 		/// <param name="cancellation">A cancellation token that can be used to cancel the operation.</param>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> once.</returns>
+		/// <returns>A scope, which when disposed, will release the semaphore once.</returns>
 		/// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
 		public async ValueTask<SemaphoreScope> LockAsync(CancellationToken cancellation = default)
 		{
@@ -68,12 +68,12 @@ public static class SemaphoreSlimExtensions
 			return new(semaphore, releaseCount: 1);
 		}
 
-		/// <summary>Blocks the current thread until it can enter the <paramref name="semaphore"/>, or the given <paramref name="timeout"/> runs out.</summary>
+		/// <summary>Blocks the current thread until it can enter the semaphore, or the given <paramref name="timeout"/> runs out.</summary>
 		/// <param name="timeout">
-		/// The maximum amount of time to allow before giving up on entering the <paramref name="semaphore"/>.
+		/// The maximum amount of time to allow before giving up on entering the semaphore.
 		/// A value of -1 millisecond represents an infinite timeout.
 		/// </param>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> if it was successfully entered.</returns>
+		/// <returns>A scope, which when disposed, will release the semaphore if it was successfully entered.</returns>
 		/// <remarks>The property <see cref="SemaphoreScope.HasEntered"/> on the returned scope can be checked to see if the semaphore was entered.</remarks>
 		public SemaphoreScope Lock(TimeSpan timeout)
 		{
@@ -83,13 +83,13 @@ public static class SemaphoreSlimExtensions
 			return new(semaphore, releaseCount: 0);
 		}
 
-		/// <summary>Asynchronously waits to enter the <paramref name="semaphore"/>, unless the <paramref name="timeout"/> runs out before that can happen.</summary>
+		/// <summary>Asynchronously waits to enter the semaphore, unless the <paramref name="timeout"/> runs out before that can happen.</summary>
 		/// <param name="timeout">
-		/// The maximum amount of time to allow before giving up on entering the <paramref name="semaphore"/>.
+		/// The maximum amount of time to allow before giving up on entering the semaphore.
 		/// A value of -1 millisecond represents an infinite timeout.
 		/// </param>
 		/// <param name="cancellation">A cancellation token that can be used to cancel the operation.</param>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> if it was successfully entered.</returns>
+		/// <returns>A scope, which when disposed, will release the semaphore if it was successfully entered.</returns>
 		/// <remarks>The property <see cref="SemaphoreScope.HasEntered"/> on the returned scope can be checked to see if the semaphore was entered.</remarks>
 		/// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
 		public async Task<SemaphoreScope> LockAsync(TimeSpan timeout, CancellationToken cancellation = default)
@@ -100,9 +100,9 @@ public static class SemaphoreSlimExtensions
 			return new(semaphore, releaseCount: 0);
 		}
 
-		/// <summary>Blocks the current thread until it can enter the <paramref name="semaphore"/>.</summary>
+		/// <summary>Blocks the current thread until it can enter the semaphore.</summary>
 		/// <param name="cancellation">A cancellation token that can be used to cancel the operation.</param>
-		/// <returns>A scope, which when disposed, will release the <paramref name="semaphore"/> once.</returns>
+		/// <returns>A scope, which when disposed, will release the semaphore once.</returns>
 		/// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
 		public SemaphoreScope Lock(CancellationToken cancellation)
 		{
