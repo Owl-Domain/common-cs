@@ -1,4 +1,4 @@
-name: .NET CI
+name: Publish to NuGet
 
 permissions:
   contents: read
