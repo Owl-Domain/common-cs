@@ -1,0 +1,135 @@
+name: .NET CI
+
+permissions:
+  contents: read
+
+
+on:
+  workflow_dispatch:
+  push:
+    branches: '**'
+    paths:
+      - 'src/**'
+      - '.editorconfig'
+
+
+env:
+    DOTNET_NOLOGO: true
+    DOTNET_CLI_TELEMETRY_OPTOUT: true
+    NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository.
+      uses: actions/checkout@v7
+      with:
+        sparse-checkout: |
+          src/
+          .editorconfig
+
+    - name: Setup the .NET development environment.
+      uses: actions/setup-dotnet@v6
+
+    - name: Restore the project dependencies.
+      working-directory: src/
+      run: dotnet restore
+
+    - name: Build the source directory.
+      working-directory: src/
+      run: dotnet build --no-restore
+
+    - name: Run the linter.
+      working-directory: src/
+      run: dotnet format --no-restore --verify-no-changes --verbosity diagnostic
+
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+      - name: Checkout the repository.
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            src/
+            .editorconfig
+
+      - name: Setup the .NET development environment.
+        uses: actions/setup-dotnet@v6
+
+      - name: Restore the project dependencies.
+        working-directory: src/
+        run: dotnet restore
+
+      - name: Build the source directory.
+        working-directory: src/
+        run: dotnet build --no-restore --warnaserror --configuration ${{ matrix.configuration }} /p:ContinuousIntegrationBuild=true /p:noWarn=IDE0055 /p:noWarn=CS1591
+
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+      - name: Checkout the repository.
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            src/
+            .editorconfig
+
+      - name: Setup the .NET development environment.
+        uses: actions/setup-dotnet@v6
+
+      - name: Restore the project dependencies.
+        working-directory: src/
+        run: dotnet restore
+
+      - name: Build the source directory.
+        working-directory: src/
+        run: dotnet build --no-restore --configuration ${{ matrix.configuration }} /p:ContinuousIntegrationBuild=true /p:noWarn=IDE0055 /p:noWarn=CS1591
+
+      - name: Run the tests.
+        working-directory: src/
+        run: dotnet test --no-build --configuration ${{ matrix.configuration }} --warnaserror /p:noWarn=IDE0055 /p:noWarn=CS1591
+
+  aot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository.
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            src/
+            .editorconfig
+
+      - name: Setup the .NET development environment.
+        uses: actions/setup-dotnet@v6
+
+      - name: Restore the project dependencies.
+        working-directory: src/AotTest
+        run: dotnet restore --runtime linux-x64
+
+      - name: Build the project directory.
+        working-directory: src/AotTest
+        run: dotnet build --no-restore --warnaserror --configuration Release --runtime linux-x64 /p:ContinuousIntegrationBuild=true /p:noWarn=IDE0055 /p:noWarn=CS1591
+
+      - name: Publish the project.
+        working-directory: src/AotTest
+        run: dotnet publish --no-build --configuration Release --runtime linux-x64 /p:ContinuousIntegrationBuild=true /p:noWarn=IDE0055 /p:noWarn=CS1591 --output "${{ runner.temp }}/aot_test/"
+
+      - name: Run the test project.
+        working-directory: ${{ runner.temp }}/aot_test
+        run: ./AotTest
