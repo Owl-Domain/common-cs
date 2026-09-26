@@ -47,6 +47,27 @@ public readonly struct SemaphoreScope : IDisposable
 /// </summary>
 public static class SemaphoreSlimExtensions
 {
+	extension(SemaphoreSlim)
+	{
+		#region Functions
+		/// <summary>Creates a semaphore that has the initial count, and the maximum count set to the given <paramref name="count"/> value.</summary>
+		/// <param name="count">The initial and maximum count of the semaphore.</param>
+		/// <returns>The configured semaphore.</returns>
+		/// <remarks>
+		/// This function exists because by default a semaphore has
+		/// <see href="https://source.dot.net/#System.Private.CoreLib/src/runtime/src/libraries/System.Private.CoreLib/src/System/Threading/SemaphoreSlim.cs,ead13858a2ff9c7c"> no maximum count</see>.<br/>
+		/// <br/>
+		/// This causes a problem because it makes it easy to create a semaphore that will behave differently
+		/// to what you'd intuit it to do, and as such it won't throw the <see cref="SemaphoreFullException"/>
+		/// even though you might expect one.<br/>
+		/// <br/>
+		/// This means that debugging would be more annoying since by default the semaphore won't
+		/// throw if it's been released more times than it has been acquired.
+		/// </remarks>
+		public static SemaphoreSlim Create(int count = 1) => new(initialCount: count, maxCount: count);
+		#endregion
+	}
+
 	extension(SemaphoreSlim semaphore)
 	{
 		#region Methods
